@@ -12,6 +12,9 @@ const router = require("./Routes/CategoryRoute");
 const CategoryRoute = require("./Routes/CategoryRoute");
 const ApiError = require("./shared/apiError");
 const globalErrorHandler = require("./middlewares/ErrorMiddleware");
+const subCategoryRoute = require("./Routes/subCategoryRoute");
+const BrandRoute = require("./Routes/BrandRoute");
+const ProductRoute = require("./Routes/ProductRoute");
 //================================================================
 /* ----------------------Information about divide project --------------------
 ** first thing will create folder that contains a connection with database prefer named Config 
@@ -45,6 +48,7 @@ if (process.env.NODE_ENV === "development") {
  * * first -> the path that will use it to send request to server
  * * second -> the route that has a logic function to ged data from database that we created inside folder Routes
  */
+// Mount Routes 
 app.use("/api/v1/categories", CategoryRoute);
 //---------->Globals errors handling middleware<-------------
 /** when i try to get some specific category with incorrect id the server return html error code
@@ -52,6 +56,9 @@ app.use("/api/v1/categories", CategoryRoute);
  **created inside express and is returned object (json type of error) so that let me control with style of error that returned
  *? so to make this will create error handling and pass it to express to error handling middleware
  **/
+app.use("/api/v1/subcategories", subCategoryRoute);
+app.use('/api/v1/brands',BrandRoute)
+app.use('/api/v1/products', ProductRoute)
 app.use("*", (req, res, next) => {
   // (*) => mean the route doesn't exist
   // but this is doesn't best way

@@ -1,39 +1,39 @@
 const { check } = require("express-validator");
 const validatorMiddleware = require("../../middlewares/validatorMiddleware");
 
-exports.getCategoryValidator = [
+exports.getBrandValidator = [
   // write rules for validate
-  check("id").isMongoId().withMessage("invalid category id format"),
+  check("id").isMongoId().withMessage("invalid Brand id format"),
   // middleware function that applies this rules above
   validatorMiddleware,
 ];
 
-exports.createCategoryValidator = [
+exports.createBrandValidator = [
   check("name")
     .notEmpty()
-    .withMessage("category name is required")
+    .withMessage("Brand name is required")
     .isLength({ min: 3 })
-    .withMessage("Too short category name")
+    .withMessage("Too short Brand name")
     .isLength({ max: 20 })
-    .withMessage("Too long category name"),
+    .withMessage("Too long Brand name"),
   validatorMiddleware,
 ];
 
 // dry => don't repeat your self -> //* but here you should create for each endpoint his validator
 //? because maybe you change validation rules for just one endpoint
-exports.updateCategoryValidator = [
-  check("id").isMongoId().withMessage("invalid category id format"),
+exports.updateBrandValidator = [
+  check("id").isMongoId().withMessage("invalid Brand id format"),
   check("name")
     .notEmpty()
-    .withMessage("you can not leave empty category name")
+    .withMessage("you can not leave empty Brand name")
     .isLength({ min: 3 })
-    .withMessage("Too short category name")
+    .withMessage("Too short Brand name")
     .isLength({ max: 20 })
-    .withMessage("Too long category name"),
+    .withMessage("Too long Brand name"),
   validatorMiddleware,
 ];
 
-exports.deleteCategoryValidator = [
-  check("id").isMongoId().withMessage("invalid category id format"),
+exports.deleteBrandValidator = [
+  check("id").isMongoId().withMessage("invalid Brand id format"),
   validatorMiddleware,
 ];

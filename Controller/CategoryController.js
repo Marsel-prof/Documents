@@ -1,7 +1,6 @@
 const slugify = require("slugify");
-const Category = require("../Models/CategoryModel");
 const asyncHandler = require("express-async-handler");
-const { query } = require("express");
+const Category = require("../Models/categoryModel");
 const ApiError = require("../shared/apiError");
 
 // @desc get all categories
@@ -20,7 +19,7 @@ exports.getCategory = asyncHandler(async (req, res) => {
 // @Route Get /api/v1/categories/:id
 // @access public
 exports.getCategoryById = asyncHandler(async (req, res, next) => {
-  const id = req.params.id;
+  const {id} = req.params;
   const category = await Category.findById(id);
   if (!category) {
     return next(new ApiError(`No category for this id ${id}`, 404));
@@ -33,7 +32,7 @@ exports.getCategoryById = asyncHandler(async (req, res, next) => {
 // @access private
 exports.createCategory = asyncHandler(async (req, res, next) => {
   //---------------------with using async await------------------
-  const name = req.body.name;
+  const {name} = req.body;
   //* you can use async await instead of then and catch
   //* to make that you should install package express-async-handler, import it by require package then put all code inside it
   const category = await Category.create({ name, slug: slugify(name) });
