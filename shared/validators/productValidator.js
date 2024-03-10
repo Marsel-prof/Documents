@@ -2,6 +2,7 @@ const { check } = require("express-validator");
 const validatorMiddleware = require("../../middlewares/validatorMiddleware");
 const category = require("../../Models/categoryModel");
 const Subcategory = require("../../Models/subCategoryModel");
+const { default: slugify } = require("slugify");
 
 exports.createProductValidator = [
   check("title")
@@ -10,7 +11,11 @@ exports.createProductValidator = [
     .isLength({ min: 3 })
     .withMessage("Too short Product name")
     .isLength({ max: 100 })
-    .withMessage("Too long Product name"),
+    .withMessage("Too long Product name")
+    .custom((val, { req }) => {
+      req.body.slug = slugify(val);
+      return true;
+    }),
   check("description")
     .notEmpty()
     .withMessage("Product description is required")
@@ -67,7 +72,7 @@ exports.createProductValidator = [
       ) =>
         category.findById(value).then((Category) => {
           if (!Category) {
-            return Promise.reject(new Error(`Invalid category id ${value}`));
+            return Promise.reject(new Error(`Invalid category id`));
           }
         })
     ),
@@ -87,20 +92,28 @@ exports.createProductValidator = [
         }
       );
     })
-  // i need to check if subCategory is belong to same category that comes in body or not
-  .custom((val, { req }) =>
-    Subcategory.find({ category: req.body.category }).then((subCategories) => {
-      const subCategoriesIdInDB = subCategories.map((subCat) =>
-        subCat._id.toString()
-      );
-      //* this line checks if all ids come in body with the request are found in the array of ids that I created it or not
-      //? if all ids were found will return true else will return false;
-      if (!val.every((v) => subCategoriesIdInDB.includes(v))) {
-        return Promise.reject(new Error("subCategories not belong to Category"));
-      }
-    }
-  )
-  ),
+    // i need to check if subCategory is belong to same category that comes in body or not
+    .custom((val, { req }) =>
+      Subcategory.find({ category: req.body.category }).then(
+        (subCategories) => {
+          const subCategoriesIdInDB = subCategories.map((subCat) =>
+            subCat._id.toString()
+          );
+          const unique = new Set(val); // i create set to memorize data without duplicate
+          // Check if all IDs provided in the request body are found in the database
+          if (!val.every((v) => subCategoriesIdInDB.includes(v))) {
+            return Promise.reject(
+              new Error("subCategories do not belong to Category")
+            );
+          }
+          // Check for duplicate data
+          if (unique.size !== subCategoriesIdInDB.length) {
+            // here i check if was there duplicate ids or not
+            return Promise.reject(new Error("The data contains duplicates"));
+          }
+        }
+      )
+    ),
   check("brand").optional().isMongoId().withMessage("invalid id formate"),
   check("ratingsAverage")
     .isNumeric()
@@ -125,6 +138,10 @@ exports.getProductValidator = [
 //? because maybe you change validation rules for just one endpoint
 exports.updateProductValidator = [
   check("id").isMongoId().withMessage("invalid Product id format"),
+  check("title").custom((val, { req }) => {
+    req.body.slug = slugify(val);
+    return true;
+  }),
   validatorMiddleware,
 ];
 

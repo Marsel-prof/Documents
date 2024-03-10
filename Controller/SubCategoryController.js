@@ -2,6 +2,8 @@ const asyncHandler = require("express-async-handler");
 const { default: slugify } = require("slugify");
 const SubCategory = require("../Models/subCategoryModel");
 const ApiError = require("../shared/apiError");
+const factory =  require("./handlersFactory")
+
 
 // @desc create subCategory
 // @Route POST /api/v1/subcategories
@@ -12,7 +14,8 @@ exports.setCategoryIdToBody = (req, res, next) => {
   if(!req.body.category) req.body.category = req.params.categoryId;
   next();
 }
-exports.createSubCategory = asyncHandler(async (req, res, next) => {
+exports.createSubCategory = factory.createOne(SubCategory)
+/* asyncHandler(async (req, res, next) => {
   const { name, category } = req.body;
   const subcategory = await SubCategory.create({
     name,
@@ -20,7 +23,7 @@ exports.createSubCategory = asyncHandler(async (req, res, next) => {
     category,
   });
   res.status(201).json({ data: subcategory });
-});
+}); */
 
 // if i want to get children from parent for example i want to get all subcategories with some category id
 // @Route GET api/categories/:categoryId/subcategories
@@ -36,7 +39,8 @@ exports.createFilterObj = (req,res,next) =>{
 // @desc get subCategories
 // @Route GET /api/v1/subcategories
 // @access public
-exports.getSubCategories = asyncHandler(async (req, res) => {
+exports.getSubCategories = factory.getAll(SubCategory);
+/*  asyncHandler(async (req, res) => {
   // --------------to make pagination-------------
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || 5;
@@ -50,12 +54,13 @@ exports.getSubCategories = asyncHandler(async (req, res) => {
   //.populate({ path: "category", select: "name -_id" }); // here will return just name //?what mean -_id
   //* mean i want return just name without id of category
   res.status(200).json({ result: subcategory.length, data: subcategory });
-});
+}); */
 
 // @desc get subCategory by id
 // @Route GET /api/v1/subcategories/:id
 // @access public
-exports.getSubCategoryById = asyncHandler(async (req, res, next) => {
+exports.getSubCategoryById = factory.getOne(SubCategory)
+/*  asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const subcategory = await SubCategory.findById(id);
   /*   .populate({
@@ -65,16 +70,17 @@ exports.getSubCategoryById = asyncHandler(async (req, res, next) => {
   // how populate is work //? first will create query to get subCategory the will create new query to
   //? get category that subcategory returned with then let show just name of category by select mean
   //? my request make to queries
-  if (!subcategory) {
-    return next(new ApiError(`No subcategory for this id ${id}`, 404));
-  }
-  res.status(200).json({ data: subcategory });
-});
+  //if (!subcategory) {
+    //return next(new ApiError(`No subcategory for this id ${id}`, 404));
+  //}
+  //res.status(200).json({ data: subcategory });
+//});
 
 // @desc update subCategory by id
 // @Route PUT /api/v1/subcategories/:id
 // @access private
-exports.updateSubCategoryById = asyncHandler(async (req, res, next) => {
+exports.updateSubCategoryById = factory.updateOne(SubCategory)
+/*  asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const { name } = req.body;
   const { category } = req.body;
@@ -87,13 +93,14 @@ exports.updateSubCategoryById = asyncHandler(async (req, res, next) => {
     return next(new ApiError(`No subcategory for this id ${id}`, 404));
   }
   res.status(200).json({ data: subcategory });
-});
+}); */
 
 // @desc delete subCategory by id
 // @Route DELETE /api/v1/subcategories/:id
 // @access private
 
-exports.deleteSubCategoryById = asyncHandler(async (req, res, next) => {
+exports.deleteSubCategoryById = factory.deleteOne(SubCategory);
+/* asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const subcategory = await SubCategory.findByIdAndDelete(id);
   if (!subcategory) {
@@ -101,3 +108,4 @@ exports.deleteSubCategoryById = asyncHandler(async (req, res, next) => {
   }
   res.status(200).json({ data: subcategory });
 });
+ */

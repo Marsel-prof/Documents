@@ -101,3 +101,18 @@ process.on("unhandledRejection", (err) => {
  * in practice create middleware for validation , create folder validator inside shared folder and inside it 
  * create file for category validator rules 
  */
+//* =============================add data in fast way ===================================
+// to can add data in easy way will create folder called dummyData inside it create json file 
+// write objects inside it that you want to insert it in product table after that will create file 
+// let name be seeder.js => this file will use it add all data automatically by create inside it a to function 
+// first function to insert data on to data base and seconde to delete all data from table product 
+//*==========================>>some methods for get data<<=============================
+// to create filtration , sort , paginate , search and limited fields you can create it inside function getProducts ...
+// but the right way is create them inside class inside shard folder and use it in any files you want with brand 
+// with category and so on 
+
+//? ==================>> refactor code <<==================
+// in all controller the delete method and is same so because in practice you should not repeat code so will create
+// common method in ne file and use it in all controller , and same thing with update method => but here 
+// i will go to validator files and in each file in validator update will add custom to validate the slugify
+// and create method is same steps of update method  
